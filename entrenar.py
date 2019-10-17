@@ -47,7 +47,6 @@ val_data_gen = image_gen_val.flow_from_directory(batch_size=batch_size,
                                                  target_size=(IMG_HEIGHT, IMG_WIDTH),
                                                  class_mode='binary')
 
-sample_training_images, _ = next(train_data_gen)
 
 num_cats_tr = len(os.listdir(train_cats_dir))
 num_dogs_tr = len(os.listdir(train_dogs_dir))
