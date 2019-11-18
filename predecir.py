@@ -1,40 +1,40 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+import os
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
 
-import tensorflow as tf
+testPath = os.path.join(os.getcwd(), 'test')
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-
-IMG_HEIGHT = 150
-IMG_WIDTH = 150
-batch_size = 128
-
-
-model = Sequential([
-    Conv2D(16, 3, padding='same', activation='relu',
-           input_shape=(IMG_HEIGHT, IMG_WIDTH ,3)),
-    MaxPooling2D(),
-    Dropout(0.2),
-    Conv2D(32, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(64, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Dropout(0.2),
-    Flatten(),
-    Dense(512, activation='relu'),
-    Dense(1, activation='sigmoid')
-])
+#Cargamos la imagen en memoria y la ajustamos para evaluar
+def load_image(filename):
+    # Carga de la imagen a memoria
+    img = load_img(filename, target_size=(224, 224))
+    # La convertimos a array para poder trabajarla
+    img = img_to_array(img)
+    # Hacemos reshape sobre 3 canales
+    img = img.reshape(1, 224, 224, 3)
+    # Por último centramos la imagen
+    img = img.astype('float32')
+    img = img - [123.68, 116.779, 103.939]
+    return img
 
 
-model.load_weights('model.h5')
+# load an image and predict the class
+def run_example():
+    # Cargamos el modelo entrenado
+    model = load_model('final_model.h5')
+    print('Clasificación: Apto [0] No apto [1]')
+    print('Salida: Archivo -> Clasificación')
+    print('--------------------------------')
+    for filename in os.listdir(testPath):
+        if filename.endswith(".jpg") or filename.endswith(".png"):
+            # Cargamos la imagen para testear
+            img = load_image(testPath+'/'+filename)
+            # Realizamos la predicción
+            result = model.predict(img)
+            print(filename + ' -> %f' % result[0])
+        else:
+            continue
 
-test_images_gen = ImageDataGenerator(rescale=1./255)
-test_images_data = test_images_gen.flow_from_directory(batch_size=batch_size,
-                                                 directory=r'C:\Users\CRODRIGU\.keras\datasets\cats_and_dogs_filtered\test',
-                                                 target_size=(IMG_HEIGHT, IMG_WIDTH))
-
-predictions = model.predict(test_images_data)
-
-print(predictions)
+# entry point, run the example
+run_example()
