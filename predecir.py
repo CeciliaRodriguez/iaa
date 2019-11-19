@@ -19,7 +19,6 @@ def load_image(filename):
     return img
 
 
-# load an image and predict the class
 def run_example():
     # Cargamos el modelo entrenado
     model = load_model('final_model.h5')
@@ -35,6 +34,5 @@ def run_example():
             print(filename + ' -> %f' % result[0])
         else:
             continue
-
-# entry point, run the example
+# Main
 run_example()

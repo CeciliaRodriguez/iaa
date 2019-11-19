@@ -45,7 +45,6 @@ def summarize_diagnostics(history):
     pyplot.close()
 
 
-# run the test harness for evaluating a model
 def run_test():
     # Instanciamos el modelo
     model = define_model()
@@ -72,5 +71,5 @@ def run_test():
     # Imprimimos curvas de apendizaje del proceso
     summarize_diagnostics(history)
 
-# entry point, run the test harness
+# Main
 run_test()
